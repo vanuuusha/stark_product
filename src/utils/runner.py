@@ -288,11 +288,9 @@ async def process_dmail(private_key, count_swaps, number):
         random_message = get_random_string(3).encode()
 
         logger.info(f"Аккаунт {number}: Отправляю транзакцию...")
-        invocation = await contract.functions["transaction"].invoke(
-            random_email.hex(), random_message.hex(), auto_estimate=True
-        )
+        invocation = await contract.functions["transaction"].invoke(random_email.hex(), random_message.hex(), auto_estimate=True)
 
-        logger.info(f"Аккаунт {number}: Транзакция ждут подтверждения...")
+        logger.info(f"Аккаунт {number} {calculate_address(private_key)}: Транзакция ждут подтверждения...")
         await invocation.wait_for_acceptance()
         await sleep(45)
         count_swaps -= 1
@@ -461,14 +459,15 @@ async def process_sith_liq_remove(private_key: str, count_swaps, number) -> None
 
 
 async def process_starknet_id(private_key: str, metamask_key, number):
+    print(private_key)
     count_mints = random.randint(stark_id_count_mints[0], stark_id_count_mints[1])
     for i in range(1, count_mints+1):
         contract = Contract(
             address=0x05DBDEDC203E92749E2E746E2D40A768D966BD243DF04A6B712E222BC040A9AF,
             abi=MINT_ID_ABI,
             provider=get_account(private_key),
+            cairo_version=1
         )
-
         invocation = await contract.functions["mint"].invoke(random.randint(400000, 20000000), auto_estimate=True)
         logger.info(f"Аккаунт {number}: Минчу старкнет ID. {i} раз")
         await invocation.wait_for_acceptance()
