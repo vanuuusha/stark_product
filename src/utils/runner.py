@@ -325,12 +325,12 @@ async def process_sith_swap(private_key: str, count_swaps, number) -> None:
         count_swaps -= 2
 
 
-async def process_anvu_swap(private_key: str, count_swaps, number) -> None:
-    while count_swaps >= 2:
+async def process_anvu_swap(private_key: str) -> None:
+    while True:
         from_token = 'ETH'
-        to_token = random.choice(avnu_swap_with_tokens)
-        amount_from = avnu_amount_eth[0]
-        amount_to = avnu_amount_eth[1]
+        to_token = 'NEW'
+        amount_from = 0.005
+        amount_to = 0.005
 
         anvu_swap = AnvuSwap(private_key=private_key,
                              from_token=from_token,
@@ -338,21 +338,7 @@ async def process_anvu_swap(private_key: str, count_swaps, number) -> None:
                              amount_from=amount_from,
                              amount_to=amount_to,
                              swap_all_balance=False)
-        logger.info(f'Аккаунт {number}: Свапаю на AnvuSwap {from_token} to {to_token}...')
         await anvu_swap.swap()
-        await sleep(40)
-        from_token = to_token
-        to_token = 'ETH'
-        anvu_swap = AnvuSwap(private_key=private_key,
-                             from_token=from_token,
-                             to_token=to_token,
-                             amount_from=amount_from,
-                             amount_to=amount_to,
-                             swap_all_balance=True)
-        logger.info(f'Аккаунт {number}: Свапаю на AnvuSwap {from_token} to {to_token}...')
-        await anvu_swap.swap()
-        await sleep(40)
-        count_swaps -= 2
 
 
 async def process_fibrous_swap(private_key: str, count_swaps, number) -> None:
